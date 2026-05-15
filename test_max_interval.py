@@ -23,7 +23,7 @@ class TestMaxInterval(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        test_data_dir = "data"
+        test_data_dir = "tests/data"
         test_data_file = os.path.join(test_data_dir, "cult.json")
         self.test_burst_detection_baseline = os.path.join(test_data_dir, "bursts.json")
         self.test_merge_bursts_baseline = os.path.join(

@@ -23,7 +23,7 @@ class TestUtils(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        test_data_dir = "data"
+        test_data_dir = "tests/data"
         test_data_file = os.path.join(test_data_dir, "cult.json")
         self.test_bursts = os.path.join(test_data_dir, "bursts_stage3.json")
         self.test_spikes = os.path.join(test_data_dir, "spikes_stage3.json")

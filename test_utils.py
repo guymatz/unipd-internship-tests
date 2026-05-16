@@ -24,10 +24,10 @@ class TestUtils(unittest.TestCase):
 
     def setUp(self) -> None:
         test_data_dir = "tests/data"
-        test_data_file = os.path.join(test_data_dir, "cult.json")
-        self.test_bursts = os.path.join(test_data_dir, "bursts_stage3.json")
-        self.test_spikes = os.path.join(test_data_dir, "spikes_stage3.json")
-        self.test_calc_ibis = os.path.join(test_data_dir, "ibi2_stage3.json")
+        test_data_file = os.path.join(test_data_dir, "alz_ab_m_culture_c1r1.json")
+        self.test_bursts = os.path.join(test_data_dir, "utils_bursts_stage3.json")
+        self.test_spikes = os.path.join(test_data_dir, "utils_spikes_stage3.json")
+        self.test_calc_ibis = os.path.join(test_data_dir, "utils_ibi2_stage3.json")
 
         self.sampling_rate: int = 1000
         self.max_begin_isi: float = 0.17

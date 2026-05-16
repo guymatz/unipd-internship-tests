@@ -10,7 +10,7 @@ import json
 import unittest
 import os
 
-from isin import _get_lagged_diffs, _filter_within_isin
+from isin import _get_lagged_diffs, _assign_burst_number_to_spike, _assign_burst_info
 
 
 # pylint: disable=too-many-instance-attributes
@@ -25,15 +25,23 @@ class TestISIn(unittest.TestCase):
     def setUp(self) -> None:
         self.test_data_dir = "tests/data"
         # test_data_file = os.path.join(test_data_dir, "cult.json")
-        self.test_spikes = os.path.join(self.test_data_dir, "short_spike_train.json")
-        self.lagged_diffs = os.path.join(self.test_data_dir, "lagged_diffs_out.json")
-        self.filtered_diffs = os.path.join(self.test_data_dir, "filtered_diffs_out.json")
+        self.test_spikes = os.path.join(
+            self.test_data_dir, "isin_short_spike_train.json"
+        )
+        self.lagged_diffs = os.path.join(self.test_data_dir, "isin_lagged_diffs.json")
+        self.filtered_diffs = os.path.join(
+            self.test_data_dir, "isin_filtered_diffs.json"
+        )
+        self.assigned_bursts = os.path.join(
+            self.test_data_dir, "isin_assigned_bursts.json"
+        )
+        self.assign_burst_info = os.path.join(
+            self.test_data_dir, "isin_assigned_burst_info.json"
+        )
 
-        # self.max_begin_isi: float = 0.17
-        # self.max_end_isi: float = 0.3
-        # self.min_burst_duration: float = 0.01
-        # self.min_ibi: float = 0.4
-        # self.min_spikes_in_burst: int = 3
+        # Original data tested with these parameters
+        self.N: int = 3  # pylint: disable=invalid-name
+        self.ISI_N: int = 6  # pylint: disable=invalid-name
 
         self.spike_train: list[float] = []
         with open(self.test_spikes, encoding="utf-8") as f:
@@ -44,7 +52,7 @@ class TestISIn(unittest.TestCase):
 
     def test_get_lagged_diffs(self) -> None:
         """Testing portion of matlab code with the comment:
-            % Look both directions from each spike
+        % Look both directions from each spike
         """
 
         # test data was created with N=3
@@ -54,19 +62,47 @@ class TestISIn(unittest.TestCase):
         for n in range(1, len(good_diffs)):
             self.assertListAlmostEqual(test_diffs[n], good_diffs[n], 3)
 
-    def test_within_isin_filter(self) -> None:
+    def test_assign_burst_number_to_spike(self) -> None:
         """Testing portion of matlab code with the comment:
-            % Look both directions from each spike
+        % Assign burst numbers to each spike
         """
 
-        # test data was created with N=3
-        test_diffs = _get_lagged_diffs(self.spike_train, 3)
-        # test data was created with ISIn = 8
-        filtered_diffs = _filter_within_isin(test_diffs, 8)
-        with open(self.filtered_diffs, encoding="utf-8") as f:
-            test_filtered_diffs = json.load(f)
-        for n in range(1, len(filtered_diffs)):
-            self.assertListAlmostEqual(filtered_diffs[n], test_filtered_diffs[n], 3)
+        # test data was created with N=3 & ISI_N = 6
+        test_diffs: list[list[float]] = _get_lagged_diffs(self.spike_train, self.N)
+
+        assigned_bursts: list[int] = _assign_burst_number_to_spike(
+            self.spike_train, test_diffs, self.N, self.ISI_N
+        )
+        with open(self.assigned_bursts, encoding="utf-8") as f:
+            test_assigned_bursts: list[int] = json.load(f)
+        self.assertListEqual(assigned_bursts, test_assigned_bursts)
+
+    def test_assign_burst_info(self) -> None:
+        """Testing portion of matlab code with the comment:
+        % Assign burst information
+        """
+
+        # test data was created with N=3 & ISI_N = 6
+        test_diffs: list[list[float]] = _get_lagged_diffs(self.spike_train, self.N)
+
+        assign_burst_nums: list[int] = _assign_burst_number_to_spike(
+            self.spike_train, test_diffs, self.N, self.ISI_N
+        )
+        assign_burst_info: dict[str, list[float]] = _assign_burst_info(
+            self.spike_train, assign_burst_nums
+        )
+        with open(self.assign_burst_info, encoding="utf-8") as f:
+            test_assign_burst_info: dict[str, list[int]] = json.load(f)
+        self.assertListAlmostEqual(
+            assign_burst_info["start"], test_assign_burst_info["start"], 3
+        )
+        self.assertListAlmostEqual(
+            assign_burst_info["end"], test_assign_burst_info["end"], 3
+        )
+        self.assertListEqual(assign_burst_info["S"], test_assign_burst_info["S"])
+        self.assertListEqual(
+            assign_burst_info["C"], test_assign_burst_info["C"]
+        )  # TODO
 
     # Source - https://stackoverflow.com/a/8312110
     # pylint: disable=invalid-name

@@ -7,14 +7,14 @@ Description: Tests for utils.py
 """
 
 import json
-import unittest
 import os
 
+from . import Test
 from isin import _get_lagged_diffs, _assign_burst_number_to_spike, _assign_burst_info
 
 
 # pylint: disable=too-many-instance-attributes
-class TestISIn(unittest.TestCase):
+class TestISIn(Test):
     """Tests for isin.py
 
     Spike Train compareed against output from

@@ -7,14 +7,14 @@ Description: tests for max_interval.py
 """
 
 import json
-import unittest
 import os
 
+from . import Test
 from max_interval import _burst_detection, _merge_bursts, _quality_control
 
 
 # pylint: disable=too-many-instance-attributes
-class TestMaxInterval(unittest.TestCase):
+class TestMaxInterval(Test):
     """Tests for max_interval.py
 
     Spike Train compareed against output from

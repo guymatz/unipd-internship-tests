@@ -7,14 +7,14 @@ Description: Tests for utils.py
 """
 
 import json
-import unittest
 import os
 
+from . import Test
 from utils import _calc_ibi
 
 
 # pylint: disable=too-many-instance-attributes
-class TestUtils(unittest.TestCase):
+class TestUtils(Test):
     """Tests for max_interval.py
 
     Spike Train compareed against output from

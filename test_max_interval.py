@@ -23,14 +23,18 @@ class TestMaxInterval(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        test_data_dir = "data"
-        test_data_file = os.path.join(test_data_dir, "cult.json")
-        self.test_burst_detection_baseline = os.path.join(test_data_dir, "bursts.json")
+        test_data_dir = "tests/data"
+        # This datafile is in Experiments_neuronal_cultures/Data_AD/Alz_ab_m/Culture1REC1
+        test_data_file = os.path.join(test_data_dir, "alz_ab_m_culture_c1r1.json")
+        # mi == max_interval!
+        self.test_burst_detection_baseline = os.path.join(
+            test_data_dir, "mi_bursts.json"
+        )
         self.test_merge_bursts_baseline = os.path.join(
-            test_data_dir, "merged_bursts.json"
+            test_data_dir, "mi_merged_bursts.json"
         )
         self.test_quality_control_baseline = os.path.join(
-            test_data_dir, "quality_control.json"
+            test_data_dir, "mi_quality_control.json"
         )
 
         self.sampling_rate: int = 1000

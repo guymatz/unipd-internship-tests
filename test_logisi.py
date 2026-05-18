@@ -8,6 +8,7 @@ Description: tests for max_interval.py
 
 import json
 import os
+import numpy as np
 
 from . import Test
 from log_isi import _get_peaks
@@ -25,8 +26,7 @@ class TestLogISI(Test):
     def setUp(self) -> None:
         test_data_dir = "tests/data"
         # This datafile is in Experiments_neuronal_cultures/Data_AD/Alz_ab_m/Culture1REC1
-        test_data_file = os.path.join(test_data_dir, "alz_ab_m_culture_c1r1.json")
-        # mi == max_interval!
+        self.test_data_file = os.path.join(test_data_dir, "alz_ab_m_culture_c1r1.json")
         self.test_get_peaks_baseline = os.path.join(
             test_data_dir, "logisi_get_peaks.json"
         )
@@ -39,18 +39,18 @@ class TestLogISI(Test):
         self.min_spikes_in_burst: int = 3
 
         self.spike_train: list[float] = []
-        with open(test_data_file, encoding="utf-8") as f:
+        with open(self.test_data_file, encoding="utf-8") as f:
             self.spike_train = json.load(f)
+        self.spike_train = [x / 1000 for x in self.spike_train]
 
     def tearDown(self) -> None:
         pass
 
     def test_get_peaks(self) -> None:
         """Test _get_peaks method against output from reference"""
-        with open(self.test_get_peaks, encoding="utf-8") as f:
-            get_peaks_baseline = json.load(f)
-
-        peaks: list[list[float, int]] = _get_peaks(
-            self.spike_train, self.max_begin_isi, self.max_end_isi, self.sampling_rate
-        )
-        self.assertListEqual(burst_detection_baseline, bursts)
+        with open(self.test_get_peaks_baseline, encoding="utf-8") as f:
+            peaks_baseline = json.load(f)
+        histogram = np.histogram(self.spike_train, density=True, bins=range(0, 36001, 2000))
+        breakpoint()
+        peaks: list[dict[str, float]] = _get_peaks(histogram)
+        self.assertListEqual(peaks_baseline, peaks)

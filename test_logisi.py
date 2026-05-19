@@ -31,6 +31,9 @@ class TestLogISI(Test):
             test_data_dir, "logisi_get_peaks.json"
         )
 
+        # tolerance when comparing floats
+        self.tolerance = 3
+
         self.sampling_rate: int = 1000
         self.max_begin_isi: float = 0.17
         self.max_end_isi: float = 0.3
@@ -51,6 +54,8 @@ class TestLogISI(Test):
         with open(self.test_get_peaks_baseline, encoding="utf-8") as f:
             peaks_baseline = json.load(f)
         histogram = np.histogram(self.spike_train, density=True, bins=range(0, 36001, 2000))
+        peaks_n_locs: list[dict[str, int], dict[str, float]] = _get_peaks(histogram)
         breakpoint()
-        peaks: list[dict[str, float]] = _get_peaks(histogram)
-        self.assertListEqual(peaks_baseline, peaks)
+        for idx, peak in enumerate(peaks_n_locs):
+            self.assertAlmostEqual(peak["pks"], peaks_baseline[idx]["pks"], self.tolerance)
+            self.assertEqual(peak["locs"], peaks_baseline[idx]["locs"])

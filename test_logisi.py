@@ -53,6 +53,7 @@ class TestLogISI(Test):
         """Test _get_peaks method against output from reference"""
         with open(self.test_get_peaks_baseline, encoding="utf-8") as f:
             peaks_baseline = json.load(f)
+        # stop hard-coding
         histogram = np.histogram(self.spike_train, density=True, bins=range(0, 36001, 2000))
         peaks_n_locs: list[dict[str, int], dict[str, float]] = _get_peaks(histogram)
         breakpoint()

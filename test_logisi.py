@@ -11,7 +11,7 @@ import os
 import numpy as np
 
 from . import Test
-from log_isi import _get_peaks
+from log_isi import _get_peaks, _find_bursts
 
 
 # pylint: disable=too-many-instance-attributes
@@ -62,3 +62,14 @@ class TestLogISI(Test):
         for idx, peak in enumerate(peaks_n_locs):
             self.assertAlmostEqual(peak["pks"], peaks_baseline[idx]["pks"], self.tolerance)
             # self.assertEqual(peak["locs"], peaks_baseline[idx]["locs"])
+
+    def test_find_bursts(self) -> None:
+        bursts: list[int, int, float] = _find_bursts(self.spike_train,
+                                                     min_ibi = 3,
+                                                     min_duration = 3,
+                                                     min_spikes = 3,
+                                                     isi_low = 2)
+        breakpoint()
+        pass
+
+
